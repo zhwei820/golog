@@ -8,10 +8,20 @@ import (
 	"sync/atomic"
 	"os"
 	"os/signal"
+	"runtime/pprof"
 )
 
 func main() {
 
+	cpuprofile := "perf.prof"
+	if cpuprofile != "" {
+		f, err := os.Create(cpuprofile)
+		if err != nil {
+			//logger.LFatal("%s", err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 	logger1 := log.GetLogger("./logs/xyz")
 	defer log.Uninit(logger1)
 
