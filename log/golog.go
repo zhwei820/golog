@@ -150,9 +150,8 @@ func InitMultiFileAndConsole(rootdir, filename string, toStderrLevel logger.Leve
 	return InitWithProvider(p)
 }
 
-func NoHeader(l logger.Logger)                     { l.NoHeader() }
-func GetLevel(l logger.Logger) logger.Level        { return l.GetLevel() }
-func SetLevel(l logger.Logger, level logger.Level) { l.SetLevel(level) }
+func NoHeader(l logger.Logger)              { l.NoHeader() }
+func GetLevel(l logger.Logger) logger.Level { return l.GetLevel() }
 
 // HTTPHandlerGetLevel returns a http handler for getting log level
 func HTTPHandlerGetLevel(l logger.Logger) http.Handler {
@@ -182,7 +181,7 @@ func HTTPHandlerSetLevel(l logger.Logger) http.Handler {
 			return
 		}
 		// updated
-		SetLevel(l, lv)
+		SetLevel(lv)
 		io.WriteString(w, oldLevel.String())
 	})
 }
@@ -240,16 +239,39 @@ func (l *GoLogger) LFatal(format string, args ...interface{}) {
 	l.Fatal(20, format, args...)
 }
 
-func GetLogger(s string) (GoLogger) {
-	logger, err := InitFile(s)
-	_logger := GoLogger{logger}
-	if err != nil {
-		_logger.LError("get logger error")
-		return _logger
+var gloggers map[string]*GoLogger
+
+func GetLogger(s string) (*GoLogger) {
+	if gloggers == nil {
+		gloggers = make(map[string]*GoLogger)
 	}
-	return _logger
+	logger0, ok := gloggers[s]
+	if ok {
+		return logger0
+	}
+	logger1, err := InitFile(s)
+	if lvl > 0 {
+		logger1.SetLevel(lvl)
+	}
+	gloggers[s] = &GoLogger{logger1}
+	if err != nil {
+		gloggers[s].LError("get logger error")
+		return gloggers[s]
+	}
+	return gloggers[s]
 }
 
-func DeferLogger(_logger logger.Logger) {
-	_logger.Quit()
+func DeferLogger() {
+	for _, _logger := range gloggers {
+		_logger.Quit()
+	}
+}
+
+var lvl logger.Level
+
+func SetLevel(level logger.Level) {
+	for _, _logger := range gloggers {
+		_logger.SetLevel(level)
+	}
+	lvl = level
 }

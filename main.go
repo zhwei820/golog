@@ -28,8 +28,7 @@ func main() {
 	logger := log.GetLogger("./logs/app")
 	defer log.Uninit(logger)
 
-	log.SetLevel(logger, log.LvTRACE)
-	log.SetLevel(logger1, log.LvTRACE)
+	log.SetLevel(log.LvTRACE)
 
 	flag.Parse()
 	d := time.Duration(0) * time.Millisecond
