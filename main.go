@@ -9,7 +9,17 @@ import (
 	"os"
 	"os/signal"
 	"runtime/pprof"
+	"encoding/json"
 )
+
+type UserInfo struct {
+	Name     string
+	Gender   int
+	Phone    string
+	QQ       string
+	Uid      string
+	Password string
+}
 
 func main() {
 
@@ -37,19 +47,24 @@ func main() {
 
 	var g sync.WaitGroup
 
+	user := UserInfo{"zhangsan", 0, "13000000000", "10000", "test_uid_xxx", "*****"}
+	userJson, err := json.Marshal(user)
+	if err != nil {
+		logger.LError("json error")
+	}
 	task := func() {
 		for atomic.LoadInt32(&running) != 0 {
-			logger.LTrace("hello %s", "Trace")
-			logger.LDebug("hello %s", "Debug")
-			logger.LInfo("hello %s", "Info")
-			logger.LWarn("hello %s", "Warn")
-			logger.LError("hello %s", "Error")
+			logger.LTrace("hello %s %s", "Trace", userJson)
+			logger.LDebug("hello %s %s", "Debug", userJson)
+			logger.LInfo("hello %s %s", "Info", userJson)
+			logger.LWarn("hello %s %s", "Warn", userJson)
+			logger.LError("hello %s %s", "Error", userJson)
 
-			logger1.LTrace("hello %s", "Trace")
-			logger1.LDebug("hello %s", "Debug")
-			logger1.LInfo("hello %s", "Info")
-			logger1.LWarn("hello %s", "Warn")
-			logger1.LError("hello %s", "Error")
+			logger1.LTrace("hello %s %s", "Trace", userJson)
+			logger1.LDebug("hello %s %s", "Debug", userJson)
+			logger1.LInfo("hello %s %s", "Info", userJson)
+			logger1.LWarn("hello %s %s", "Warn", userJson)
+			logger1.LError("hello %s %s", "Error", userJson)
 
 			if d > 0 {
 				time.Sleep(d)
