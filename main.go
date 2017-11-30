@@ -9,7 +9,20 @@ import (
 	"os"
 	"os/signal"
 	"runtime/pprof"
+	"strings"
 )
+
+func udpMessage(snbid string, key string, data interface{})  {
+
+	header_bytes := "{\"key\": " + key +"}"  //ujson.dumps({"key": key}, ensure_ascii=False).encode()
+	header_length := strings. header_bytes)
+	//body_length = len(body_bytes)
+	//total_length = header_length + body_length + 12
+	//data = b'sicent%06x%06x%s%06x%s' % (total_length, header_length, header_bytes, body_length, body_bytes)
+	//udp_socket.sendto(data, (GOLOG_ADDRESS[0], GOLOG_ADDRESS[1]))
+	//
+
+}
 
 func main() {
 
