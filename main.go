@@ -13,16 +13,16 @@ var port = "22002"
 func udpSend(s string) {
 	addr, err := net.ResolveUDPAddr("udp", host+":"+port)
 	if err != nil {
-		fmt.Println("Can't resolve address: ", err)
+		logger.LError("Can't resolve address: %s", err)
 		os.Exit(1)
 	}
 	conn, err := net.DialUDP("udp", nil, addr)
 	if err != nil {
-		fmt.Println(err)
+		logger.LError("%s", err)
 	}
 	defer conn.Close()
 	conn.Write([]byte(s))
-	fmt.Printf("<%s>\n", conn.RemoteAddr())
+	logger.LInfo("<%s>\n", conn.RemoteAddr())
 }
 func udpMessage(snbid string, key string, body_bytes string) {
 	header_bytes := "{\"key\": \"" + key + "\"}" //ujson.dumps({"key": key}, ensure_ascii=False).encode()
